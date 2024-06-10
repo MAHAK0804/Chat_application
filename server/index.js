@@ -17,8 +17,8 @@ app.use("/api/messages", messageRoute);
 mongoose.connect('mongodb+srv://mahakdeveloper0804:Mahak%40080204@cluster0.lpbdmkv.mongodb.net/chat_app'
 );
 
-const server = app.listen(process.env.PORT, () => {
-    console.log(`Server is started on PORT:${process.env.PORT}`);
+const server = app.listen(5000, () => {
+    console.log(`Server is started on PORT:5000`);
 });
 
 const io  = socket(server,{
