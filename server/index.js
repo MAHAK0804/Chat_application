@@ -14,7 +14,7 @@ app.use("/api/auth", userRoutes);
 app.use("/api/messages", messageRoute);
 
 
-mongoose.connect('mongodb+srv://mahakdeveloper0804:Mahak%40080204@cluster0.lpbdmkv.mongodb.net/chat_app/'
+mongoose.connect('mongodb+srv://mahakdeveloper0804:Mahak%40080204@cluster0.lpbdmkv.mongodb.net/chat_app'
 );
 
 const server = app.listen(process.env.PORT, () => {
