@@ -24,6 +24,7 @@ const server = app.listen(process.env.PORT, () => {
 const io  = socket(server,{
     cors:{
         origin:"https://chat-application-lovat-ten.vercel.app",
+        methods:["POST","GET"],
         credentials:true,
     }
 });
