@@ -3,7 +3,6 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const userRoutes = require("./routes/usersRoutes");
 const messageRoute = require("./routes/mesaagesRoute");
-const { createServer } = require('http');
 
 const app = express();
 const socket = require('socket.io');
@@ -15,16 +14,12 @@ app.use("/api/auth", userRoutes);
 app.use("/api/messages", messageRoute);
 
 
-mongoose.connect('mongodb+srv://mahakdeveloper0804:Mahak%40080204@cluster0.lpbdmkv.mongodb.net/chat_app',
-                  { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('MongoDB connected'))
-    .catch(err => console.error('MongoDB connection error:', err));
+mongoose.connect('mongodb+srv://mahakdeveloper0804:Mahak%40080204@cluster0.lpbdmkv.mongodb.net/chat_app');
 
 
-// const server = app.listen(5000, () => {
-//     console.log(`Server is started on PORT:5000`);
-// });
-const httpServer = createServer(app);
+const server = app.listen(5000, () => {
+    console.log(`Server is started on PORT:5000`);
+});
 const io  = socket(server,{
     cors:{
         origin:"https://chat-application-lovat-ten.vercel.app",
@@ -34,27 +29,16 @@ const io  = socket(server,{
 });
 global.onlineUsers = new Map();
 
-io.on("connection", (socket) => {
-    console.log('New WebSocket connection:', socket.id);
-
-    socket.on("add-user", (userID) => {
-        onlineUsers.set(userID, socket.id);
-        console.log('User added:', userID);
+io.on("connection", (socket)=>{
+    global.chatSocket = socket;
+    socket.on("add-user",(userID)=>{
+        onlineUsers.set(userID,socket.id);
     });
-
-    socket.on("send-msg", (data) => {
+    socket.on("send-msg",(data)=>{
         const sendUserSocket = onlineUsers.get(data.to);
-        if (sendUserSocket) {
-            socket.to(sendUserSocket).emit("msg-recieve", data.message);
-            console.log('Message sent to:', data.to);
-        }
+        if(sendUserSocket)
+            {
+                socket.to(sendUserSocket).emit("msg-recieve",data.message);
+            }
     });
-
-    socket.on("disconnect", () => {
-        console.log('WebSocket disconnected:', socket.id);
-    });
-});
-
-httpServer.listen(process.env.PORT, () => {
-    console.log(`Server is started on PORT: ${process.env.PORT}`);
-});
+})
