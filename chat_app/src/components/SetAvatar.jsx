@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
-import { Buffer } from "buffer";
 import loader from "../assests/loader.gif";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,11 +8,11 @@ import { useNavigate } from "react-router-dom";
 import { setAvatarRoute } from "../utils/APIRoutes";
 
 const SetAvatar = () => {
-  const api = `https://api.multiavatar.com/4645646`;
   const navigate = useNavigate();
   const [avatars, setAvatars] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedAvatar, setSelectedAvatar] = useState(undefined);
+
   const toastOptions = {
     position: "bottom-right",
     autoClose: 8000,
@@ -35,16 +34,13 @@ const SetAvatar = () => {
       const user = await JSON.parse(localStorage.getItem("chat-app-user"));
 
       const { data } = await axios.post(`${setAvatarRoute}/${user._id}`, {
-        image: avatars[selectedAvatar],
+        image: avatars[selectedAvatar], // save avatar URL
       });
 
       if (data.isSet) {
         user.isAvatarImageSet = true;
         user.avatarImage = data.image;
-        localStorage.setItem(
-          "chat-app-user",
-          JSON.stringify(user)
-        );
+        localStorage.setItem("chat-app-user", JSON.stringify(user));
         navigate("/");
       } else {
         toast.error("Error setting avatar. Please try again.", toastOptions);
@@ -55,28 +51,26 @@ const SetAvatar = () => {
   useEffect(() => {
     const fetchAvatars = async () => {
       try {
-        const data = [];
+        const styles = ["adventurer", "bottts", "micah", "pixel-art", "avataaars"];
+        const urls = [];
+
         for (let i = 0; i < 4; i++) {
-          const image = await axios.get(`${api}/${Math.round(Math.random() * 1000)}`);
-          const buffer = new Buffer(image.data);
-          data.push(buffer.toString("base64"));
-          // Adding delay between requests to avoid hitting rate limit
-          await new Promise(resolve => setTimeout(resolve, 1000)); // 1-second delay
+          const style = styles[Math.floor(Math.random() * styles.length)];
+          const seed = Math.floor(Math.random() * 10000);
+          const url = `https://api.dicebear.com/6.x/${style}/svg?seed=${seed}`;
+          urls.push(url);
         }
-        setAvatars(data);
+
+        setAvatars(urls);
         setIsLoading(false);
       } catch (error) {
-        if (error.response && error.response.status === 429) {
-          toast.error("Too many requests. Please try again later.", toastOptions);
-        } else {
-          toast.error("Error fetching avatars. Please try again.", toastOptions);
-        }
+        toast.error("Error fetching avatars. Please try again.", toastOptions);
         setIsLoading(false);
       }
     };
 
     fetchAvatars();
-  }, [api]);
+  }, []);
 
   return (
     <>
@@ -96,7 +90,7 @@ const SetAvatar = () => {
                 key={index}
                 onClick={() => setSelectedAvatar(index)}
               >
-                <img src={`data:image/svg+xml;base64,${avatar}`} alt="avatar" />
+                <img src={avatar} alt="avatar" />
               </div>
             ))}
           </div>
@@ -146,6 +140,8 @@ const Container = styled.div`
       transition: 0.5s ease-in-out;
       img {
         height: 6rem;
+        width: 6rem;
+        border-radius: 50%;
         transition: 0.5s ease-in-out;
       }
     }
