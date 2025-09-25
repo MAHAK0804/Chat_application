@@ -3,6 +3,10 @@ import styled from 'styled-components';
 import Logo from "../assests/MACDOC.gif";
 
 export default function Contacts({ contacts, currentUser, changeChat }) {
+    console.log("contacts",contacts);
+    console.log("currentUser",currentUser);
+    console.log("changeChat",changeChat);
+    
     const [currentUserName, setCurrentUserName] = useState(undefined);
     const [currentUserImage, setCurrentUserImage] = useState(undefined);
     const [currentSelected, setCurrentSelected] = useState(undefined);
