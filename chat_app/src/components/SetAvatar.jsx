@@ -31,11 +31,14 @@ const SetAvatar = () => {
     if (selectedAvatar === undefined) {
       toast.error("Please select an avatar", toastOptions);
     } else {
+      console.log("selecteed->>>>>",selectedAvatar);
+      
       const user = await JSON.parse(localStorage.getItem("chat-app-user"));
 
       const { data } = await axios.post(`${setAvatarRoute}/${user._id}`, {
         image: avatars[selectedAvatar], // save avatar URL
       });
+      console.log("data->>>>>",data);
 
       if (data.isSet) {
         user.isAvatarImageSet = true;
@@ -165,3 +168,4 @@ const Container = styled.div`
     }
   }
 `;
+
